@@ -1,4 +1,4 @@
-# fe-utilities.css
+# fe-utilities
 
 A small, Bootstrap-style CSS utility module using **singular, composable classes** — all safely prefixed with **`fe-`** to avoid conflicts with existing frameworks (Bootstrap, Tailwind, etc) and custom component styles.
 
