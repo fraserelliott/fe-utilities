@@ -1,0 +1,30 @@
+{
+  "name": "@fraserelliott/fe-utilities",
+  "version": "0.2.0",
+  "description": "Bootstrap-style CSS utilities prefixed with fe-, plus optional class presets.",
+  "license": "MIT",
+  "keywords": [
+    "css",
+    "utilities",
+    "utility-classes",
+    "frontend"
+  ],
+  "files": [
+    "fe-utilities.css",
+    "presets",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "*.css"
+  ],
+  "exports": {
+    "./fe-utilities.css": "./fe-utilities.css",
+    "./presets": "./presets/index.js",
+    "./cx": "./presets/cx.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fraserelliott/fe-utilities"
+  }
+}

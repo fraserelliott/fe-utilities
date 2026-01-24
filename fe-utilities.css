@@ -591,3 +591,52 @@
   white-space: nowrap !important;
   border: 0 !important;
 }
+
+/* ---------------------------
+   Animations
+---------------------------- */
+
+.fe-pressable {
+  transition: transform 140ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform;
+}
+
+.fe-pressable:hover {
+  transform: translateY(-1px);
+}
+
+.fe-pressable:active {
+  transition-duration: 70ms;
+  transform: translateY(0) scale(0.98);
+}
+
+.fe-pressable:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+@keyframes fe-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+}
+
+.fe-anim-pulse {
+  animation: fe-pulse 900ms ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fe-pressable,
+  .fe-anim-pulse {
+    animation: none !important;
+    transition: none !important;
+  }
+  .fe-pressable:hover,
+  .fe-pressable:active {
+    transform: none !important;
+  }
+}
