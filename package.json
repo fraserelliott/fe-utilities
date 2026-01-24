@@ -1,6 +1,6 @@
 {
   "name": "@fraserelliott/fe-utilities",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Bootstrap-style CSS utilities prefixed with fe-, plus optional class presets.",
   "license": "MIT",
   "keywords": [

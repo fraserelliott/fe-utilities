@@ -85,9 +85,6 @@ Then import it in a javascript file:
 import "@fraserelliott/fe-utilities/fe-utilities.css";
 ```
 
-Absolutely — here’s a clean **Option C** you can drop straight into your README under Installation.
-
-````md
 ### Option C: Install with npm (CSS + optional presets)
 
 If you want to use the utility CSS **and** the optional JavaScript presets (pre-composed class strings), install via npm and import both.
@@ -97,7 +94,6 @@ If you want to use the utility CSS **and** the optional JavaScript presets (pre-
 ```bash
 npm i @fraserelliott/fe-utilities
 ```
-````
 
 #### 2) Import the CSS (required for utilities)
 
