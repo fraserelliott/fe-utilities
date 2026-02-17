@@ -11,6 +11,10 @@ This file is intentionally “boring and predictable”:
 
 ---
 
+## Compatibility note
+
+This library is primarily developed and tested in a personal stack using _Node_, _Vite_, and _React_. It should work fine in other environments, but broader compatibility isn’t guaranteed yet - if you try it elsewhere and hit issues, feel free to open an issue on GitHub.
+
 ## Why this exists
 
 Sometimes you want the speed of utility classes **without bringing in a full framework**.
