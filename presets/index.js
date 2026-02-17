@@ -1,4 +1,4 @@
-export const FEComponents = Object.freeze({
+export const FEPresets = Object.freeze({
   // Containers / layout
   Card: "fe-d-flex fe-flex-column fe-gap-3 fe-p-3 fe-rounded-2",
   Stack: "fe-d-flex fe-flex-column fe-gap-2",

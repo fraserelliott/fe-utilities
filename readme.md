@@ -1,6 +1,6 @@
 # fe-utilities
 
-A small, Bootstrap-style CSS utility module using **singular, composable classes** — all safely prefixed with **`fe-`** to avoid conflicts with existing frameworks (Bootstrap, Tailwind, etc) and custom component styles.
+A small, Bootstrap-style CSS utility module using **singular, composable classes** - all safely prefixed with **`fe-`** to avoid conflicts with existing frameworks (Bootstrap, Tailwind, etc) and custom component styles.
 
 This file is intentionally “boring and predictable”:
 
@@ -108,7 +108,7 @@ import "@fraserelliott/fe-utilities/fe-utilities.css";
 Presets give you reusable, pre-composed class names you can apply directly via `className`.
 
 ```js
-import { FEComponents } from "@fraserelliott/fe-utilities/presets";
+import { FEPresets } from "@fraserelliott/fe-utilities/presets";
 ```
 
 Example:
@@ -116,8 +116,8 @@ Example:
 ```jsx
 export function Example() {
   return (
-    <div className={FEComponents.Card}>
-      <button className={FEComponents.Btn}>Click me</button>
+    <div className={FEPresets.Card}>
+      <button className={FEPresets.Btn}>Click me</button>
     </div>
   );
 }
@@ -125,7 +125,12 @@ export function Example() {
 
 #### 4) Optional: use the `cx()` helper
 
-If you want a clean way to combine classes conditionally:
+`cx()` is a small helper for composing class names cleanly.
+It accepts:
+
+- class strings
+- preset/style functions
+- conditional values (`condition && value`)
 
 ```js
 import { cx } from "@fraserelliott/fe-utilities/cx";
@@ -136,20 +141,26 @@ Example:
 ```jsx
 export function Example({ isPrimary }) {
   return (
-    <button className={cx(FEComponents.Btn, isPrimary && "app-btn--primary")}>
+    <button className={cx(FEPresets.Btn, isPrimary && "app-btn--primary")}>
       Save
     </button>
   );
 }
 ```
 
-> ✅ Tip: Keep colours and branding project-level (`app-btn--primary`, etc) so the utility library stays neutral and reusable.
+Because presets are typically functions, you can also compose them semantically:
+
+```js
+cx(FEPresets.Card, condition && FEPresets.Highlight);
+```
+
+This keeps styling consistent while still allowing easy overrides.
 
 ---
 
 ## Why presets?
 
-The utility classes in `fe-utilities.css` are designed to be **small and composable** — but once you start building real UIs, you’ll often notice you’re repeatedly typing the same “bundles” of classes (eg a card layout, a button base, a flex row with consistent alignment).
+The utility classes in `fe-utilities.css` are designed to be **small and composable** - but once you start building real UIs, you’ll often notice you’re repeatedly typing the same “bundles” of classes (eg a card layout, a button base, a flex row with consistent alignment).
 
 That’s what **presets** solve.
 
@@ -163,18 +174,18 @@ Presets are **pre-composed class strings** you can reuse across your app:
 Example:
 
 ```jsx
-import { FEComponents } from "@fraserelliott/fe-utilities/presets";
+import { FEPresets } from "@fraserelliott/fe-utilities/presets";
 
 export function Example() {
   return (
-    <div className={FEComponents.Card}>
-      <button className={FEComponents.Btn}>Save</button>
+    <div className={FEPresets.Card}>
+      <button className={FEPresets.Btn}>Save</button>
     </div>
   );
 }
 ```
 
-Presets are intentionally **optional** — if you prefer writing raw utility classes directly in your markup, you can ignore them completely and just use the CSS file.
+Presets are intentionally **optional** - if you prefer writing raw utility classes directly in your markup, you can ignore them completely and just use the CSS file.
 
 ---
 
@@ -182,21 +193,22 @@ Presets are intentionally **optional** — if you prefer writing raw utility cla
 
 The presets included with this package are meant to be a helpful starting point, not “the one true way”.
 
-In most projects, you’ll quickly end up with your own app-specific variants (brand colours, button styles, layout rules, etc). A good pattern is to create a small file in your project that composes your own presets on top of the base `FEComponents` values.
+In most projects, you’ll quickly end up with your own app-specific variants (brand colours, button styles, layout rules, etc). A good pattern is to create a small file in your project that composes your own presets on top of the base `FEPresets` values.
+
+`cx` supports both class strings and preset functions, so you can compose styles semantically while keeping overrides simple.
 
 Example: `src/styles/components.js`
 
 ```js
-import { FEComponents } from "@fraserelliott/fe-utilities/presets";
+import { FEPresets } from "@fraserelliott/fe-utilities/presets";
 import { cx } from "@fraserelliott/fe-utilities/cx";
 
 export const UI = {
-  Card: (...extra) => cx(FEComponents.Card, ...extra),
+  Card: (...extra) => cx(FEPresets.Card, ...extra),
 
-  Btn: (...extra) => cx(FEComponents.Btn, ...extra),
-  BtnPrimary: (...extra) => cx(FEComponents.Btn, "app-btn--primary", ...extra),
-  BtnSecondary: (...extra) =>
-    cx(FEComponents.Btn, "app-btn--secondary", ...extra),
+  Btn: (...extra) => cx(FEPresets.Btn, ...extra),
+  BtnPrimary: (...extra) => cx(FEPresets.Btn, "app-btn--primary", ...extra),
+  BtnSecondary: (...extra) => cx(FEPresets.Btn, "app-btn--secondary", ...extra),
 };
 ```
 
@@ -215,7 +227,27 @@ export function Example() {
 }
 ```
 
-This keeps the library neutral and reusable, while still letting each project define its own “design language” cleanly.
+### Recommended usage notes
+
+- Presets are usually functions so you can easily apply small tweaks:
+
+  ```js
+  UI.Card("fec-opacity-80");
+  ```
+
+- `cx()` accepts both strings and preset functions:
+
+  ```js
+  cx(UI.Card, condition && UI.Highlight);
+  ```
+
+- Avoid nesting `cx()` calls - just pass additional arguments instead:
+
+  ```js
+  cx(UI.Card, "extra-class", condition && UI.Highlight);
+  ```
+
+This keeps styling composable, predictable, and easy to override while letting each project define its own design language cleanly.
 
 ---
 
@@ -562,4 +594,4 @@ If you want, you can also:
 
 ## License
 
-Use it however you like — this is a simple utility module intended for personal projects and portfolios.
+Use it however you like - this is a simple utility module intended for personal projects and portfolios.

@@ -1,8 +1,9 @@
 {
   "name": "@fraserelliott/fe-utilities",
-  "version": "0.2.1",
-  "description": "Bootstrap-style CSS utilities prefixed with fe-, plus optional class presets.",
+  "version": "0.3.0",
+  "description": "Bootstrap-style CSS utilities prefixed with fe-, plus optional class presets and composition function.",
   "license": "MIT",
+  "type": "module",
   "keywords": [
     "css",
     "utilities",
@@ -26,5 +27,12 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/fraserelliott/fe-utilities"
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0",
+    "jest": "^30.2.0"
+  },
+  "scripts": {
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest"
   }
 }
