@@ -1,6 +1,6 @@
 {
   "name": "@fraserelliott/fe-utilities",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Bootstrap-style CSS utilities prefixed with fe-, plus optional class presets and composition function.",
   "license": "MIT",
   "type": "module",
@@ -21,7 +21,7 @@
   ],
   "exports": {
     "./fe-utilities.css": "./fe-utilities.css",
-    "./presets": "./presets/index.js",
+    ".": "./presets/index.js",
     "./cx": "./presets/cx.js"
   },
   "repository": {

@@ -13,3 +13,5 @@ export const FEPresets = Object.freeze({
   Muted: "fe-text-muted",
   Truncate: "fe-truncate fe-min-w-0",
 });
+
+export { cx } from "./cx";
