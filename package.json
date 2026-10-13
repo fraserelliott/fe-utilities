@@ -1,7 +1,7 @@
 {
   "name": "@fraserelliott/fe-utilities",
-  "version": "0.3.1",
-  "description": "Bootstrap-style CSS utilities prefixed with fe-, plus optional class presets and composition function.",
+  "version": "0.4.0",
+  "description": "Bootstrap-style CSS utilities prefixed with fe- with inline style utilities, plus optional class presets and composition functions.",
   "license": "MIT",
   "type": "module",
   "keywords": [
@@ -11,18 +11,15 @@
     "frontend"
   ],
   "files": [
-    "fe-utilities.css",
-    "presets",
-    "README.md",
-    "LICENSE"
+  "dist/",
+  "src/",
+  "README.md",
+  "LICENSE"
   ],
-  "sideEffects": [
-    "*.css"
-  ],
+  "sideEffects":  ["**/*.css"],
   "exports": {
-    "./fe-utilities.css": "./fe-utilities.css",
-    ".": "./presets/index.js",
-    "./cx": "./presets/cx.js"
+    "./fe-utilities.css": "./dist/fe-utilities.css",
+    ".": "./src/index.js"
   },
   "repository": {
     "type": "git",
@@ -30,9 +27,16 @@
   },
   "devDependencies": {
     "cross-env": "^10.1.0",
-    "jest": "^30.2.0"
+    "jest": "^30.2.0",
+    "postcss": "^8.5.29",
+    "postcss-js": "^5.1.0"
   },
   "scripts": {
-    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest"
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
+    "build:css" : "node scripts/build-css.js",
+    "prepack" : "npm run build:css"
+  },
+  "allowScripts": {
+    "unrs-resolver@1.11.1": true
   }
 }
