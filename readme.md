@@ -1,603 +1,285 @@
 # fe-utilities
 
-A small, Bootstrap-style CSS utility module using **singular, composable classes** - all safely prefixed with **`fe-`** to avoid conflicts with existing frameworks (Bootstrap, Tailwind, etc) and custom component styles.
+A lightweight collection of reusable JavaScript utilities and atomic CSS layout helpers, designed to make styling and composition straightforward.
 
-This file is intentionally “boring and predictable”:
-
-- one class = one job
-- `!important` used consistently so utilities win when applied
-- spacing options provided in **rem**, **em**, and **px**
-- flex utilities included for quick layout building
+Works independently or alongside `@fraserelliott/fe-components` and `@fraserelliott/fe-slate`.
 
 ---
 
-## Compatibility note
+## Overview
 
-This library is primarily developed and tested in a personal stack using _Node_, _Vite_, and _React_. It should work fine in other environments, but broader compatibility isn’t guaranteed yet - if you try it elsewhere and hit issues, feel free to open an issue on GitHub.
+`fe-utilities` provides small, composable tools for building user interfaces without introducing a component framework or enforcing a particular visual theme.
 
----
+It is designed to be:
 
-## Why this exists
+- **Lightweight** – focused utilities with minimal abstraction.
+- **Composable** – combine styles and class names without repetitive boilerplate.
+- **Framework-independent** – JavaScript utilities are not tied to React.
+- **Predictable** – later styles override earlier ones.
+- **Reusable** – share styling patterns across projects.
 
-Sometimes you want the speed of utility classes **without bringing in a full framework**.
-
-This file gives you the common stuff you reach for constantly:
-
-- spacing (`padding` / `margin`)
-- flex + alignment
-- sizing helpers
-- truncation
-- a few accessibility helpers (like `sr-only`)
-
-### The unit philosophy (important)
-
-This module supports a simple rule:
-
-- **`rem` = global layout spacing**
-  - scales with the site's root font size
-  - consistent across the entire UI (good for page rhythm)
-
-- **`em` = component-internal spacing**
-  - scales with the _component’s_ font size
-  - perfect for buttons, badges, cards, etc
-
-- **`px` = “absolute nudge” spacing**
-  - use when you want fixed, exact spacing (icons, fine-tuning)
-
-This keeps your spacing system consistent:
-
-- the entire page scales together via `rem`
-- individual components can scale themselves via `em`
+The package includes JavaScript composition functions and namespaced CSS utilities for layout and structure.
 
 ---
 
 ## Installation
 
-### Option A: Simple CSS import
-
-Put the file somewhere like:
-
-```
-
-src/styles/fe-utilities.css
-
-```
-
-Then import it:
-
-#### Vite / React / modern bundlers
-
-```js
-import "./styles/fe-utilities.css";
-```
-
-#### Plain HTML
-
-```html
-<link rel="stylesheet" href="/css/fe-utilities.css" />
-```
-
-### Option B: npm with css import
-
-Install it in the command line:
-
 ```bash
-npm i @fraserelliott/fe-utilities
+npm install @fraserelliott/fe-utilities
 ```
-
-Then import it in a javascript file:
-
-```js
-import "@fraserelliott/fe-utilities/fe-utilities.css";
-```
-
-### Option C: Install with npm (CSS + optional presets)
-
-If you want to use the utility CSS **and** the optional JavaScript presets (pre-composed class strings), install via npm and import both.
-
-#### 1) Install
-
-```bash
-npm i @fraserelliott/fe-utilities
-```
-
-#### 2) Import the CSS (required for utilities)
-
-In your app entry file (eg `main.jsx` / `main.js`):
-
-```js
-import "@fraserelliott/fe-utilities/fe-utilities.css";
-```
-
-#### 3) Import presets (optional)
-
-Presets give you reusable, pre-composed class names you can apply directly via `className`.
-
-```js
-import { FEPresets } from "@fraserelliott/fe-utilities/presets";
-```
-
-Example:
-
-```jsx
-export function Example() {
-  return (
-    <div className={FEPresets.Card}>
-      <button className={FEPresets.Btn}>Click me</button>
-    </div>
-  );
-}
-```
-
-#### 4) Optional: use the `cx()` helper
-
-`cx()` is a small helper for composing class names cleanly.
-It accepts:
-
-- class strings
-- preset/style functions
-- conditional values (`condition && value`)
-
-```js
-import { cx } from "@fraserelliott/fe-utilities/cx";
-```
-
-Example:
-
-```jsx
-export function Example({ isPrimary }) {
-  return (
-    <button className={cx(FEPresets.Btn, isPrimary && "app-btn--primary")}>
-      Save
-    </button>
-  );
-}
-```
-
-Because presets are typically functions, you can also compose them semantically:
-
-```js
-cx(FEPresets.Card, condition && FEPresets.Highlight);
-```
-
-This keeps styling consistent while still allowing easy overrides.
 
 ---
 
-## Why presets?
+## JavaScript utilities
 
-The utility classes in `fe-utilities.css` are designed to be **small and composable** - but once you start building real UIs, you’ll often notice you’re repeatedly typing the same “bundles” of classes (eg a card layout, a button base, a flex row with consistent alignment).
+### cx
 
-That’s what **presets** solve.
+`cx` combines class names into a single string, ignoring falsy values.
 
-Presets are **pre-composed class strings** you can reuse across your app:
+```javascript
+import { cx } from "@fraserelliott/fe-utilities";
 
-- consistent layout and spacing without rethinking it every time
-- fewer missing/forgotten utility classes
-- faster UI building (especially when prototyping)
-- easier to update a common pattern in one place later
-
-Example:
-
-```jsx
-import { FEPresets } from "@fraserelliott/fe-utilities/presets";
-
-export function Example() {
-  return (
-    <div className={FEPresets.Card}>
-      <button className={FEPresets.Btn}>Save</button>
-    </div>
-  );
-}
+const className = cx(
+  "button",
+  isActive && "button-active",
+  isDisabled && "button-disabled",
+  customClassName
+);
 ```
 
-Presets are intentionally **optional** - if you prefer writing raw utility classes directly in your markup, you can ignore them completely and just use the CSS file.
+This is particularly useful when class names depend on component state or consumer-provided overrides.
 
----
+### sx
 
-### Project-specific presets (recommended)
+`sx` combines JavaScript style objects, merging nested objects recursively.
 
-The presets included with this package are meant to be a helpful starting point, not “the one true way”.
+```javascript
+import { sx } from "@fraserelliott/fe-utilities";
 
-In most projects, you’ll quickly end up with your own app-specific variants (brand colours, button styles, layout rules, etc). A good pattern is to create a small file in your project that composes your own presets on top of the base `FEPresets` values.
-
-`cx` supports both class strings and preset functions, so you can compose styles semantically while keeping overrides simple.
-
-Example: `src/styles/components.js`
-
-```js
-import { FEPresets } from "@fraserelliott/fe-utilities/presets";
-import { cx } from "@fraserelliott/fe-utilities/cx";
-
-export const UI = {
-  Card: (...extra) => cx(FEPresets.Card, ...extra),
-
-  Btn: (...extra) => cx(FEPresets.Btn, ...extra),
-  BtnPrimary: (...extra) => cx(FEPresets.Btn, "app-btn--primary", ...extra),
-  BtnSecondary: (...extra) => cx(FEPresets.Btn, "app-btn--secondary", ...extra),
+const baseStyle = {
+  padding: "1rem",
+  color: "#ffffff",
+  border: {
+    width: 1,
+    style: "solid",
+  },
 };
+
+const overrideStyle = {
+  color: "#e2e8f0",
+  border: {
+    width: 2,
+  },
+};
+
+const result = sx(baseStyle, overrideStyle);
 ```
 
-Usage:
+Result:
 
-```jsx
-import { UI } from "../styles/components";
-
-export function Example() {
-  return (
-    <div className={UI.Card()}>
-      <button className={UI.BtnPrimary()}>Save</button>
-      <button className={UI.BtnSecondary()}>Cancel</button>
-    </div>
-  );
+```javascript
+{
+  padding: "1rem",
+  color: "#e2e8f0",
+  border: {
+    width: 2,
+    style: "solid"
+  }
 }
 ```
 
-### Recommended usage notes
+Later values take precedence, while properties not explicitly overridden are preserved.
 
-- Presets are usually functions so you can easily apply small tweaks:
+Falsy top-level inputs can also be used for conditional composition:
 
-  ```js
-  UI.Card("fec-opacity-80");
-  ```
-
-- `cx()` accepts both strings and preset functions:
-
-  ```js
-  cx(UI.Card, condition && UI.Highlight);
-  ```
-
-- Avoid nesting `cx()` calls - just pass additional arguments instead:
-
-  ```js
-  cx(UI.Card, "extra-class", condition && UI.Highlight);
-  ```
-
-This keeps styling composable, predictable, and easy to override while letting each project define its own design language cleanly.
-
----
-
-## Naming conventions
-
-All utilities are prefixed:
-
-- `fe-...`
-
-### Spacing naming
-
-These follow the same patterns you’d expect from Bootstrap/Tailwind-ish utilities:
-
-#### Rem-based spacing
-
-- `fe-p-*` / `fe-m-*` for padding/margin
-- `fe-px-*` / `fe-mx-*` for left+right
-- `fe-py-*` / `fe-my-*` for top+bottom
-- `fe-pt-*`, `fe-pr-*`, `fe-pb-*`, `fe-pl-*`
-- `fe-mt-*`, `fe-mr-*`, `fe-mb-*`, `fe-ml-*`
-
-#### Em-based spacing
-
-- `fe-p-em-*`
-- `fe-m-em-*`
-
-#### Px-based spacing
-
-- `fe-p-px-*`
-- `fe-m-px-*`
-
----
-
-## Utility scale
-
-### Rem spacing scale
-
-| Class | Value     |
-| ----- | --------- |
-| `*-0` | `0`       |
-| `*-1` | `0.25rem` |
-| `*-2` | `0.5rem`  |
-| `*-3` | `1rem`    |
-| `*-4` | `1.5rem`  |
-| `*-5` | `2rem`    |
-
-Examples:
-
-```html
-<div class="fe-p-3">...</div>
-<div class="fe-mt-4">...</div>
-<div class="fe-px-2 fe-py-1">...</div>
+```javascript
+const style = sx(
+  baseStyle,
+  isActive && activeStyle,
+  isDisabled && disabledStyle
+);
 ```
 
-### Em spacing scale
+#### Removing properties with null
 
-| Class    | Value    |
-| -------- | -------- |
-| `*-em-0` | `0`      |
-| `*-em-1` | `0.25em` |
-| `*-em-2` | `0.5em`  |
-| `*-em-3` | `1em`    |
-| `*-em-4` | `1.5em`  |
-| `*-em-5` | `2em`    |
+`sx` supports removing existing properties by setting them to `null` in a later style object.
 
-Examples:
-
-```html
-<button class="fe-p-em-2">Button</button>
-<span class="fe-m-em-1">Inline spacing</span>
+```javascript
+const result = sx(
+  {
+    padding: "1rem",
+    backgroundColor: "#1e293b",
+    color: "#ffffff",
+  },
+  {
+    backgroundColor: null,
+    color: "#e2e8f0",
+  }
+);
 ```
 
-### Px spacing scale
+Result:
 
-| Class     | Value  |
-| --------- | ------ |
-| `*-px-0`  | `0px`  |
-| `*-px-4`  | `4px`  |
-| `*-px-8`  | `8px`  |
-| `*-px-12` | `12px` |
-| `*-px-16` | `16px` |
-| `*-px-24` | `24px` |
-
-Examples:
-
-```html
-<div class="fe-p-px-8">...</div>
-<div class="fe-m-px-16">...</div>
+```javascript
+{
+  padding: "1rem",
+  color: "#e2e8f0"
+}
 ```
 
----
+This is useful when composing default styles with theme or consumer overrides, particularly when an earlier value should be removed rather than replaced.
 
-## Included utilities
+**Note:** `null` removes a property during the merge in which it is encountered. It is not preserved as a deletion instruction for subsequent merges.
 
-### Display
+### feStyle
 
-- `fe-d-none`
-- `fe-d-block`
-- `fe-d-inline`
-- `fe-d-inline-block`
-- `fe-d-flex`
-- `fe-d-inline-flex`
+`feStyle` combines style objects and class names into a single object suitable for spreading onto a JSX element.
 
----
+```jsx
+import { feStyle } from "@fraserelliott/fe-utilities";
 
-### Flex direction + wrapping
+const buttonProps = feStyle(
+  [
+    { padding: "0.5rem 1rem" },
+    { borderRadius: "0.5rem" },
+  ],
+  [
+    "button",
+    isActive && "button-active",
+  ]
+);
 
-- `fe-flex-row`
-- `fe-flex-column`
-- `fe-flex-row-reverse`
-- `fe-flex-column-reverse`
-- `fe-flex-wrap`
-- `fe-flex-nowrap`
-
----
-
-### Justify content
-
-- `fe-justify-start`
-- `fe-justify-center`
-- `fe-justify-end`
-- `fe-justify-between`
-- `fe-justify-around`
-- `fe-justify-evenly`
-
----
-
-### Align items
-
-- `fe-items-start`
-- `fe-items-center`
-- `fe-items-end`
-- `fe-items-stretch`
-- `fe-items-baseline`
-
----
-
-### Align self
-
-- `fe-self-start`
-- `fe-self-center`
-- `fe-self-end`
-- `fe-self-stretch`
-
----
-
-### Flex grow/shrink
-
-- `fe-grow-0`
-- `fe-grow-1`
-- `fe-shrink-0`
-- `fe-shrink-1`
-
----
-
-### Gap (rem-based)
-
-- `fe-gap-0`
-- `fe-gap-1`
-- `fe-gap-2`
-- `fe-gap-3`
-- `fe-gap-4`
-- `fe-gap-5`
-
-Examples:
-
-```html
-<div class="fe-d-flex fe-gap-3">
-  <div>One</div>
-  <div>Two</div>
-</div>
+<button {...buttonProps}>Save</button>
 ```
 
+The resulting object contains:
+
+```javascript
+{
+  style: {
+    padding: "0.5rem 1rem",
+    borderRadius: "0.5rem"
+  },
+  className: "button button-active"
+}
+```
+
+The `style` property is composed using `sx`, while `className` is composed using `cx`.
+
+This is particularly useful when building reusable components that combine default styling, theme styling, and consumer overrides.
+
 ---
 
-### Sizing
+## CSS layout utilities
 
-- `fe-w-100`
-- `fe-h-100`
-- `fe-w-auto`
-- `fe-h-auto`
-- `fe-min-w-0`
-- `fe-min-h-0`
+`fe-utilities` also provides namespaced atomic CSS utilities for layout and structure.
 
-> ✅ `fe-min-w-0` is especially useful inside flex containers to prevent overflow issues.
+These use the `fe-` prefix to minimise naming conflicts with application styles.
 
----
+Examples include:
 
-### Text utilities
-
-- `fe-text-left`
-- `fe-text-center`
-- `fe-text-right`
-- `fe-fw-normal`
-- `fe-fw-bold`
-- `fe-text-muted`
-- `fe-nowrap`
-- `fe-break-word`
-- `fe-truncate`
+- `fe-d-flex` – flexbox display.
+- `fe-d-inline-flex` – inline flexbox display.
+- `fe-flex-column` – vertical flex direction.
+- `fe-items-center` – cross-axis alignment.
+- `fe-justify-center` – main-axis alignment.
+- `fe-gap-2` – spacing between elements.
+- `fe-rounded-2` – border radius.
 
 Example:
 
 ```html
-<div class="fe-truncate fe-min-w-0">
-  A long line that should not wrap and will ellipsis...
+<div class="fe-d-flex fe-flex-column fe-gap-2 fe-items-center">
+  <div>First item</div>
+  <div>Second item</div>
 </div>
 ```
 
----
+These utilities focus on structure rather than application-specific colours, typography, or visual identity.
 
-### Position utilities
+### Using utility style objects
 
-- `fe-pos-relative`
-- `fe-pos-absolute`
-- `fe-pos-fixed`
-- `fe-pos-sticky`
+The package also exports a `utilities` object containing reusable inline style equivalents.
 
----
+```javascript
+import { sx, utilities } from "@fraserelliott/fe-utilities";
 
-### Overflow utilities
-
-- `fe-overflow-hidden`
-- `fe-overflow-auto`
-- `fe-overflow-x-auto`
-- `fe-overflow-y-auto`
-
----
-
-### Border radius
-
-- `fe-rounded-0`
-- `fe-rounded-1`
-- `fe-rounded-2`
-- `fe-rounded-3`
-- `fe-rounded-pill`
-
----
-
-### Accessibility helpers
-
-- `fe-sr-only`
-
-Example:
-
-```html
-<button>
-  <span class="fe-sr-only">Close modal</span>
-  ✕
-</button>
+const layout = sx(
+  utilities["fe-d-flex"],
+  utilities["fe-flex-column"],
+  utilities["fe-gap-2"],
+  utilities["fe-items-center"]
+);
 ```
 
-## Animations / micro-interactions
+This allows the same structural utilities to be used when composing inline styles.
 
-`fe-utilities` includes a small set of optional animation helpers intended to add subtle “life” to interactive elements, without becoming distracting.
+---
 
-### `.fe-pressable` (hover + press feedback)
+## Working with fe-slate
 
-Adds a slight lift on hover and a subtle “pressed in” scale on click/tap.
+`fe-utilities` and `fe-slate` have complementary responsibilities:
 
-```html
-<button class="fe-pressable">Click me</button>
-<a class="fe-pressable" href="#">Link</a>
+- `fe-utilities` provides structural styling and composition.
+- `fe-slate` provides colours, typography, shadows, and other appearance tokens.
+
+For example:
+
+```javascript
+import { sx, utilities } from "@fraserelliott/fe-utilities";
+import { styles } from "@fraserelliott/fe-slate";
+
+const panelStyle = sx(
+  utilities["fe-d-flex"],
+  utilities["fe-flex-column"],
+  utilities["fe-gap-2"],
+  utilities["fe-p-em-1"],
+  styles.BGSecondary,
+  styles.TextPrimary,
+  styles.GlassBorder,
+  styles.ShadowSubtle
+);
 ```
 
-Notes:
-
-- Works well on buttons, clickable cards, icon buttons, and links
-- Includes a `:focus-visible` outline for keyboard accessibility
+This produces a reusable panel style without coupling layout to a particular theme.
 
 ---
 
-### `.fe-anim-pulse` (attention / CTA pulse)
+## Working with fe-components
 
-A gentle pulse animation intended for _temporary_ emphasis (eg “Next step” buttons).
+`fe-components` uses the same composition approach through its `useFEStyles` hook and `FEStyleProvider`.
 
-```html
-<button class="fe-anim-pulse">Continue</button>
-```
+The styling system combines component defaults, theme configuration, and consumer overrides to produce standard React `style` and `className` props.
 
-> Tip: Use this sparingly. If everything pulses, nothing feels important.
+`fe-utilities` provides the underlying composition helpers, but can be used independently of the component library.
 
 ---
 
-### Reduced motion support
+## Design philosophy
 
-Animations and transitions are automatically disabled when the user has enabled reduced motion in their OS/browser settings:
+`fe-utilities` focuses on small, reusable building blocks rather than large abstractions.
 
-- `prefers-reduced-motion: reduce`
+It does not provide:
 
----
+- React components.
+- Application state management.
+- A complete visual theme.
+- Opinionated component designs.
 
-## Example usage patterns
+Instead, it provides the tools to combine styling from different sources while retaining control over the final result.
 
-### Card layout
-
-```html
-<section class="fe-p-4 fe-d-flex fe-flex-column fe-gap-3">
-  <h2 class="fe-m-0">Title</h2>
-  <p class="fe-m-0 fe-text-muted">Body content goes here.</p>
-
-  <div class="fe-d-flex fe-justify-between fe-items-center fe-gap-3">
-    <button class="fe-p-em-2 fe-rounded-pill">Action</button>
-    <span class="fe-truncate fe-min-w-0">
-      A long secondary label that should truncate nicely...
-    </span>
-  </div>
-</section>
-```
-
-### Simple horizontal toolbar
-
-```html
-<div class="fe-d-flex fe-items-center fe-gap-2 fe-py-2 fe-px-3">
-  <button class="fe-p-em-2">Back</button>
-  <div class="fe-grow-1"></div>
-  <button class="fe-p-em-2">Save</button>
-</div>
-```
+The goal is to make common styling operations simple, consistent, and reusable.
 
 ---
 
-## Customising
+## Summary
 
-### Change the spacing scale
+`fe-utilities` provides a foundation for composing UI styles and class names.
 
-If you want this to behave like a design system, the best next step is turning it into a small SCSS generator so the spacing scale lives in one place.
+- Use **`cx`** to combine conditional class names.
+- Use **`sx`** to recursively merge style objects and remove properties with `null`.
+- Use **`feStyle`** to generate combined `style` and `className` props.
+- Use **CSS utilities** or the exported `utilities` object for layout and structure.
+- Combine with **`fe-slate`** and **`fe-components`** for a complete reusable styling system.
 
-If you want, you can also:
-
-- add `fe-gap-em-*` for component gaps
-- add `fe-border-*` utilities
-- add `fe-shadow-*` utilities
-- add `fe-color-*` utilities (or keep colors as component styles)
-
----
-
-## Notes / limitations
-
-- These utilities intentionally use `!important` so they behave predictably.
-- This is _not_ intended to replace a full design system.
-- The goal is speed + consistency + no naming collisions.
-
----
-
-## License
-
-Use it however you like - this is a simple utility module intended for personal projects and portfolios.
+Each package can be used independently, while sharing a consistent approach to styling.
